@@ -47,6 +47,7 @@ enum Exp:
   case And(lhs: Exp, rhs: Exp)
   case Or(lhs: Exp, rhs: Exp)
   case Not(e: Exp)
+  case Impl(lhs: Exp, rhs: Exp)
 import Exp._
 
 /**
@@ -61,13 +62,26 @@ Tasks:
 */
 
 def eval(e: Exp) : Boolean = e match {
-  case True()    => sys.error("not yet implemented")
-  case False()   => sys.error("not yet implemented")
-  case And(l, r) => sys.error("not yet implemented")
-  case Or(l, r)  => sys.error("not yet implemented")
-  case Not(e)    => sys.error("not yet implemented")
+  case True()    => true
+  case False()   => false
+  case And(l, r) => eval(l) && eval(r)
+  case Or(l, r)  => eval(l) || eval(r)
+  case Not(e)    => !eval(e)
+  case Impl(l,r) => !eval(l) || eval(r)
 }
 
 val exampleProposition = And(Not(True()), False()) // should evaluate to false
+val prop11 = And(Or(True(),Or(False(),False())),And(Not(False()),True())) // should evaluate to true
+val prop12 = Or(Not(And(True(),True())),And(True(),False())) //should evaluate to false
+val prop21 = Impl(True(),False()) //false 
+val prop22 = Impl(False(), True()) //true
+val prop23 = Not(Impl(And(True(),False()),Or(False(),False()))) //false
+
+eval(exampleProposition)
+eval(prop11)
+eval(prop12)
+eval(prop21)
+eval(prop22)
+eval(prop23)
 
 }
